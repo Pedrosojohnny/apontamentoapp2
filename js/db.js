@@ -1,5 +1,17 @@
-const DB_NAME = 'BauerProductionDB';
-const DB_VERSION = 2; // Bumped version for master data
+/**
+ * db.js — IndexedDB wrapper (offline-first persistence layer).
+ *
+ * Object stores:
+ *   scans          — completed production records (one row per unit finished)
+ *   masterOrders   — OM → item mapping imported from Excel
+ *   masterRoutings — item → operation sequence imported from Excel
+ *   settings       — reserved for future session/config keys
+ *
+ * Exposed as `window.db` so all other modules can call it without imports.
+ */
+
+const DB_NAME    = 'BauerProductionDB';
+const DB_VERSION = 2;
 
 class ProductionDB {
     constructor() {
@@ -84,15 +96,26 @@ class ProductionDB {
     async getMasterOrder(om) {
         if (!om) return null;
         const cleanOM = om.toString().replace(/^0+/, '') || '0';
-        // 1. Tenta buscar pelo código limpo (padrão novo)
+
+        // 1. Try with stripped zeros (canonical format)
         let order = await this._perform('masterOrders', 'readonly', (store) => store.get(cleanOM));
-        
-        // 2. Se não achar, tenta buscar pelo código original (padrão antigo)
+
+        // 2. Try with original value for records stored before zero-stripping was introduced
         if (!order && om.toString() !== cleanOM) {
             order = await this._perform('masterOrders', 'readonly', (store) => store.get(om.toString()));
         }
-        
-        return order;
+
+        // 3. Fall back to static demo data when the DB has no imported orders yet
+        if (!order) {
+            const raw = (window.BAUER_DATA?.orders || []).find(
+                o => o.op.toString().replace(/^0+/, '') === cleanOM
+            );
+            if (raw) {
+                order = { om: raw.op, itemCode: raw.itemCode, descricao: raw.descricao, quantidade: raw.quantidade };
+            }
+        }
+
+        return order || null;
     }
 
     async getMasterRoutings(itemCode) {
@@ -102,7 +125,18 @@ class ProductionDB {
             const index = store.index('itemCode');
             const request = index.getAll(itemCode);
 
-            request.onsuccess = () => resolve(request.result);
+            request.onsuccess = () => {
+                let result = request.result;
+
+                // Fall back to static demo routings when the DB has no imported routings for this item
+                if (!result || result.length === 0) {
+                    result = (window.BAUER_DATA?.routings || [])
+                        .filter(r => r.itemCode === itemCode)
+                        .map((r, i) => ({ ...r, id: i + 1 }));
+                }
+
+                resolve(result);
+            };
             request.onerror = () => reject(request.error);
         });
     }

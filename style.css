@@ -150,9 +150,8 @@ header {
 }
 
 .btn-primary:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
-    background: #333;
 }
 
 .btn-secondary {
@@ -294,6 +293,20 @@ input:focus, select:focus {
 
 #reader__status_span {
     display: none !important;
+}
+
+/* Hide the entire shaded overlay injected by html5-qrcode — we use our own */
+#qr-shaded-region {
+    display: none !important;
+}
+
+/* Clip camera feed to match the green rectangle: width 94%, height 90%, centered */
+/* inset top/bottom = (100 - 90) / 2 = 5%,  sides = (100 - 94) / 2 = 3% */
+#login-reader,
+#setup-reader,
+#reader {
+    clip-path: inset(5% 3% round 0.5rem);
+    overflow: hidden;
 }
 
 #reader video, #setup-reader video {

@@ -1,3 +1,13 @@
+/**
+ * auth.js — Operator authentication.
+ *
+ * Validates against the operator list in BAUER_DATA (data.js).
+ * Falls back to accepting any ID when the list is empty so the app
+ * remains usable during initial setup before master data is loaded.
+ *
+ * Exposed as `window.Auth`.
+ */
+
 const Auth = {
     currentOperators: [],
     

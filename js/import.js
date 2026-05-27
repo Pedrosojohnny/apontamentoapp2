@@ -1,3 +1,17 @@
+/**
+ * import.js — Excel master data importer.
+ *
+ * Reads an .xlsx file with two sheets (Orders and Routings), maps columns
+ * using fuzzy name matching to handle variations in the PCP spreadsheet format,
+ * then saves the result to IndexedDB via window.db.saveMasterData().
+ *
+ * Column matching is intentionally lenient: it tries exact normalized matches
+ * first, then partial matches. This makes the import resilient to minor header
+ * changes in the source spreadsheet without requiring code changes.
+ *
+ * Exposed as `window.importer`.
+ */
+
 class DataImporter {
     constructor() {
         this.isImporting = false;
@@ -89,10 +103,6 @@ class DataImporter {
                     });
 
                     // 5. Salvar no IndexedDB
-                    console.log('Importando:', mappedOrders.length, 'ordens e', mappedRoutings.length, 'roteiros.');
-                    if (mappedOrders.length > 0) console.log('Exemplo Ordem:', mappedOrders[0]);
-                    if (mappedRoutings.length > 0) console.log('Exemplo Roteiro:', mappedRoutings[0]);
-
                     await window.db.saveMasterData(mappedOrders, mappedRoutings);
                     
                     this.isImporting = false;

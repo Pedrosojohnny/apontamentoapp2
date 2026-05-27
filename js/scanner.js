@@ -1,3 +1,16 @@
+/**
+ * scanner.js — Camera-based barcode scanner wrapper around html5-qrcode.
+ *
+ * Supports CODE_128, CODE_39, EAN_13, and QR_CODE.
+ * Also handles scanning from a static image file (useful for testing on desktop).
+ *
+ * One scanner instance is shared across all screens. `stop()` must be called
+ * before switching screens to release the camera lock — some browsers throw
+ * if you open a new session while the previous one is still running.
+ *
+ * Exposed as `window.scanner`.
+ */
+
 class BarcodeScanner {
     constructor() {
         this.html5QrCode = null;
@@ -6,7 +19,7 @@ class BarcodeScanner {
         this.lastElementId = null;
         this.config = {
             fps: 10,
-            qrbox: { width: 450, height: 120 },
+            qrbox: { width: 320, height: 90 },
             formatsToSupport: [ 
                 Html5QrcodeSupportedFormats.CODE_128,
                 Html5QrcodeSupportedFormats.CODE_39,
@@ -20,7 +33,6 @@ class BarcodeScanner {
         try {
             this.cameras = await Html5Qrcode.getCameras();
             if (this.cameras && this.cameras.length > 0) {
-                console.log('Câmeras encontradas:', this.cameras);
                 return true;
             }
             throw new Error('Nenhuma câmera encontrada.');
@@ -62,7 +74,7 @@ class BarcodeScanner {
             );
             document.getElementById(elementId).classList.add('scanner-running');
         } catch (err) {
-            console.warn('Erro ao iniciar com config, tentando modo simplificado:', err);
+            console.warn('Tentando modo de câmera simplificado:', err);
             try {
                 await this.html5QrCode.start(
                     cameraId, 
