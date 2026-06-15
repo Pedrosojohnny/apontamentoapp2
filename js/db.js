@@ -26,6 +26,35 @@ class ProductionDB {
             
             request.onsuccess = (event) => {
                 this.db = event.target.result;
+                
+                // Seed IndexedDB if empty to facilitate testing
+                try {
+                    const transaction = this.db.transaction(['masterOrders'], 'readonly');
+                    const store = transaction.objectStore('masterOrders');
+                    const countRequest = store.count();
+                    countRequest.onsuccess = () => {
+                        if (countRequest.result === 0) {
+                            console.log('Populando IndexedDB com dados padrão de teste...');
+                            const orders = (window.BAUER_DATA?.orders || []).map(o => ({
+                                om: o.op,
+                                itemCode: o.itemCode,
+                                descricao: o.descricao,
+                                quantidade: o.quantidade
+                            }));
+                            const routings = (window.BAUER_DATA?.routings || []).map(r => ({
+                                itemCode: r.itemCode,
+                                sequencia: r.sequencia,
+                                operacao: r.operacao
+                            }));
+                            this.saveMasterData(orders, routings)
+                                .then(() => console.log('IndexedDB populado com sucesso.'))
+                                .catch(err => console.error('Erro ao popular IndexedDB:', err));
+                        }
+                    };
+                } catch (e) {
+                    console.error('Erro ao verificar/popular banco de dados:', e);
+                }
+
                 resolve(this.db);
             };
 
