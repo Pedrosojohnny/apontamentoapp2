@@ -1,4 +1,4 @@
-﻿/**
+/**
  * app.js — Application entry point.
  *
  * Responsibilities:
@@ -297,6 +297,15 @@ async function showScreen(screenId) {
         if (screenId === 'login') {
             const canScan = await window.scanner.init();
             if (canScan) {
+                const btnSwitch = document.getElementById('btn-switch-camera-login');
+                if (btnSwitch) {
+                    btnSwitch.style.display = window.scanner.cameras.length > 1 ? 'block' : 'none';
+                    btnSwitch.onclick = () =>
+                        window.scanner.switch('login-reader', (code) => {
+                            inputs.operatorId.value = sanitizeCode(code);
+                            handleLogin();
+                        });
+                }
                 window.scanner.start('login-reader', (code) => {
                     inputs.operatorId.value = sanitizeCode(code);
                     handleLogin();
@@ -313,6 +322,15 @@ async function showScreen(screenId) {
             if (inputs.omId.value.trim()) validateSetup();
             const canScan = await window.scanner.init();
             if (canScan) {
+                const btnSwitch = document.getElementById('btn-switch-camera-setup');
+                if (btnSwitch) {
+                    btnSwitch.style.display = window.scanner.cameras.length > 1 ? 'block' : 'none';
+                    btnSwitch.onclick = () =>
+                        window.scanner.switch('setup-reader', (code) => {
+                            inputs.omId.value = sanitizeCode(code);
+                            validateSetup();
+                        });
+                }
                 window.scanner.start('setup-reader', (code) => {
                     inputs.omId.value = sanitizeCode(code);
                     validateSetup();

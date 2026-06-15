@@ -32,12 +32,21 @@ async function initProductionMode() {
     renderHistory();
 
     const canScan = await window.scanner.init();
-    if (canScan) window.scanner.start('reader', handleBarcodeScan);
+    if (canScan) {
+        const btnSwitch = document.getElementById('btn-switch-camera');
+        if (btnSwitch) {
+            btnSwitch.style.display = window.scanner.cameras.length > 1 ? 'block' : 'none';
+        }
+        window.scanner.start('reader', handleBarcodeScan);
+    }
 
     // Switch-camera is production-specific; replace the handler each time
     // the screen re-initialises so it always points at the live callback.
-    document.getElementById('btn-switch-camera').onclick = () =>
-        window.scanner.switch('reader', handleBarcodeScan);
+    const btnSwitch = document.getElementById('btn-switch-camera');
+    if (btnSwitch) {
+        btnSwitch.onclick = () =>
+            window.scanner.switch('reader', handleBarcodeScan);
+    }
 }
 
 // ─── Barcode Handling ─────────────────────────────────────────────────────────

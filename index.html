@@ -50,6 +50,12 @@
                             <div class="scanner-overlay-ui" style="position: absolute; width: 94%; height: 90%; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid var(--accent-primary); border-radius: 0.5rem; pointer-events: none; z-index: 10;">
                                 <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: #000; padding: 1px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; white-space: nowrap;">ID OPERADOR</div>
                             </div>
+                            <!-- Camera Controls -->
+                            <div style="position: absolute; bottom: 0.5rem; right: 0.5rem; z-index: 20; display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" id="btn-switch-camera-login" style="display: none; padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px;" title="Inverter Câmera">
+                                    🔄
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -110,6 +116,12 @@
                             </div>
                             <div class="scanner-overlay-ui" style="position: absolute; width: 94%; height: 90%; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid var(--accent-primary); border-radius: 0.5rem; pointer-events: none; z-index: 10;">
                                 <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: #000; padding: 1px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; white-space: nowrap;">CODE 128</div>
+                            </div>
+                            <!-- Camera Controls -->
+                            <div style="position: absolute; bottom: 0.5rem; right: 0.5rem; z-index: 20; display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" id="btn-switch-camera-setup" style="display: none; padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px;" title="Inverter Câmera">
+                                    🔄
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -184,7 +196,7 @@
                         <button class="btn btn-secondary" id="btn-upload-test" title="Testar com Imagem" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px;">
                             📁
                         </button>
-                        <button class="btn btn-secondary" id="btn-switch-camera" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px;">
+                        <button class="btn btn-secondary" id="btn-switch-camera" style="display: none; padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px;">
                             🔄
                         </button>
                     </div>
